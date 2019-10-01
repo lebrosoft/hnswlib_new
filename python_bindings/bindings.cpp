@@ -103,6 +103,10 @@ public:
         ep_added = false;
     }
 
+    unsigned int get_num() {
+        return cur_l;
+    }
+
     void set_ef(size_t ef) {
         appr_alg->ef_ = ef;
     }
@@ -254,6 +258,16 @@ public:
         return ids;
     }
 
+    std::vector<unsigned int> getLabelsList() {
+
+        std::vector<unsigned int> ids;
+
+        for(auto kv : appr_alg->label_lookup_) {
+            ids.push_back(kv.second);
+        }
+        return ids;
+    }
+
     py::object knnQuery_return_numpy(py::object input, size_t k = 1, int num_threads = -1) {
 
         py::array_t < dist_t, py::array::c_style | py::array::forcecast > items(input);
@@ -389,7 +403,9 @@ PYBIND11_PLUGIN(hnswlib) {
         .def("add_items", &Index<float>::addItems, py::arg("data"), py::arg("ids") = py::none(), py::arg("num_threads")=-1)
         .def("get_items", &Index<float, float>::getDataReturnList, py::arg("ids") = py::none())
         .def("get_ids_list", &Index<float>::getIdsList)
+        .def("get_labels_list", &Index<float>::getLabelsList)
         .def("set_ef", &Index<float>::set_ef, py::arg("ef"))
+        .def("get_num", &Index<float>::get_num)
         .def("get_ef_construction", &Index<float>::get_ef_construction)
         .def("get_M", &Index<float>::get_M)
         .def("set_num_threads", &Index<float>::set_num_threads, py::arg("num_threads"))

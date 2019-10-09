@@ -705,19 +705,26 @@ namespace hnswlib {
             return;
         }
 
+        //leon changed
         template<typename data_t>
         std::vector<data_t> getDataByLabel(labeltype label)
         {
             tableint label_c;
+            std::vector<data_t> data;
+            size_t dim = *((size_t *) dist_func_param_);
+
             auto search = label_lookup_.find(label);
             if (search == label_lookup_.end() || isMarkedDeleted(search->second)) {
-                throw std::runtime_error("Label not found");
+                // throw std::runtime_error("Label not found");
+                //if label not found return dim*0?
+                for (int i = 0; i < dim; i++) {
+                    data.push_back(0);
+                }
+                return data;
             }
             label_c = search->second;
 
             char* data_ptrv = getDataByInternalId(label_c);
-            size_t dim = *((size_t *) dist_func_param_);
-            std::vector<data_t> data;
             data_t* data_ptr = (data_t*) data_ptrv;
             for (int i = 0; i < dim; i++) {
                 data.push_back(*data_ptr);
